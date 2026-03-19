@@ -1,3 +1,67 @@
+<script>
+    (function() {
+        // ✅ TUMHARA SECRET CODE
+        const OWNER_CODE = 'lucian-owner-2024';
+        
+        // Check if owner is accessing
+        const urlParams = new URLSearchParams(window.location.search);
+        const isOwnerByURL = urlParams.get('owner') === 'lucian';
+        const isOwnerByStorage = localStorage.getItem('ownerKey') === OWNER_CODE;
+        
+        if (isOwnerByURL || isOwnerByStorage) {
+            // ✅ OWNER MODE ACTIVATED
+            localStorage.setItem('ownerKey', OWNER_CODE);
+            
+            // Add owner badge
+            const style = document.createElement('style');
+            style.innerHTML = `
+                .owner-only { display: block !important; }
+                .owner-badge {
+                    position: fixed;
+                    top: 10px;
+                    right: 10px;
+                    background: gold;
+                    color: black;
+                    padding: 5px 15px;
+                    border-radius: 20px;
+                    font-weight: bold;
+                    z-index: 10000;
+                    border: 2px solid orange;
+                    box-shadow: 0 0 20px gold;
+                }
+                .admin-quick-link {
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    background: linear-gradient(135deg, #667eea, #764ba2);
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 50px;
+                    text-decoration: none;
+                    z-index: 10000;
+                    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Add badge
+            const badge = document.createElement('div');
+            badge.className = 'owner-badge';
+            badge.innerHTML = '👑 Owner Mode';
+            document.body.appendChild(badge);
+            
+            // Add admin link
+            const adminLink = document.createElement('a');
+            adminLink.href = 'admin.html';
+            adminLink.className = 'admin-quick-link';
+            adminLink.innerHTML = '⚙️ Admin Panel →';
+            document.body.appendChild(adminLink);
+            
+            // Remove join/create options for owner? Tum dekhlo
+            // document.querySelector('.options-container')?.remove();
+        }
+    })();
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
