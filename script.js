@@ -500,3 +500,184 @@ window.joinRoom = function() {
     const password = prompt('Enter Room Password:');
     return secureJoinRoom(roomId, password);
 };
+// File ke END mein ye sab add karo
+
+// ========== PROFESSIONAL FEATURES ==========
+
+// 1. Dark Mode Toggle
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDark);
+    
+    // Update icon
+    const btn = document.querySelector('.theme-toggle i');
+    if (btn) {
+        btn.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+    }
+}
+
+// Load dark mode preference
+if (localStorage.getItem('darkMode') === 'true') {
+    document.body.classList.add('dark-mode');
+}
+
+// Add dark mode button to page
+window.addEventListener('load', function() {
+    const btn = document.createElement('button');
+    btn.className = 'theme-toggle';
+    btn.innerHTML = '<i class="fas fa-moon"></i>';
+    btn.onclick = toggleDarkMode;
+    document.body.appendChild(btn);
+});
+
+// 2. Loading Animation
+function showLoader() {
+    document.getElementById('loader').style.display = 'block';
+}
+
+function hideLoader() {
+    document.getElementById('loader').style.display = 'none';
+}
+
+// Show loader on page navigation
+document.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', showLoader);
+});
+
+// 3. Back to Top Button
+window.addEventListener('scroll', function() {
+    const btn = document.getElementById('backToTop');
+    if (window.scrollY > 300) {
+        btn.style.display = 'block';
+    } else {
+        btn.style.display = 'none';
+    }
+});
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 4. Cookie Consent
+function acceptCookies() {
+    localStorage.setItem('cookiesAccepted', 'true');
+    document.getElementById('cookieConsent').style.display = 'none';
+}
+
+// Show cookie consent if not accepted
+if (!localStorage.getItem('cookiesAccepted')) {
+    document.getElementById('cookieConsent').style.display = 'block';
+}
+
+// 5. FAQ Accordion
+function initFAQ() {
+    document.querySelectorAll('.faq-question').forEach(question => {
+        question.addEventListener('click', function() {
+            this.parentElement.classList.toggle('active');
+        });
+    });
+}
+
+// 6. Contact Form Handler
+async function handleContactSubmit(event) {
+    event.preventDefault();
+    showLoader();
+    
+    // Simulate form submission
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    hideLoader();
+    alert('✅ Message sent! We\'ll reply within 24 hours.');
+}
+
+// 7. Profile Page Functions
+function updateProfile() {
+    const name = document.getElementById('profileName').value;
+    const bio = document.getElementById('profileBio').value;
+    
+    localStorage.setItem('userName', name);
+    localStorage.setItem('userBio', bio);
+    
+    alert('✅ Profile updated!');
+}
+
+function uploadProfilePhoto(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        localStorage.setItem('profilePhoto', e.target.result);
+        document.querySelector('.profile-photo img').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+// 8. Notification System
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <span>${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()">✕</button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+}
+
+// 9. Analytics Tracking
+function trackEvent(category, action, label) {
+    if (typeof gtag !== 'undefined') {
+        gtag('event', action, {
+            'event_category': category,
+            'event_label': label
+        });
+    }
+    
+    // Also store locally
+    const events = JSON.parse(localStorage.getItem('analytics') || '[]');
+    events.push({
+        category,
+        action,
+        label,
+        timestamp: Date.now()
+    });
+    localStorage.setItem('analytics', JSON.stringify(events.slice(-50)));
+}
+
+// 10. PWA Service Worker Registration
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('✅ Service Worker registered'))
+            .catch(err => console.log('❌ Service Worker error:', err));
+    });
+}
+
+// 11. Initialize all features
+document.addEventListener('DOMContentLoaded', function() {
+    initFAQ();
+    
+    // Track page view
+    trackEvent('Page', 'View', window.location.pathname);
+    
+    // Check if profile page exists
+    if (window.location.pathname.includes('profile')) {
+        loadProfileData();
+    }
+});
+
+// 12. Load Profile Data
+function loadProfileData() {
+    const name = localStorage.getItem('userName');
+    const bio = localStorage.getItem('userBio');
+    const photo = localStorage.getItem('profilePhoto');
+    
+    if (name) document.getElementById('profileName').value = name;
+    if (bio) document.getElementById('profileBio').value = bio;
+    if (photo) document.querySelector('.profile-photo img').src = photo;
+}
