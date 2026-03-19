@@ -575,3 +575,73 @@ footer {
     color: #721c24;
     border: 1px solid #f5c6cb;
     }
+/* Security Styles */
+.password-section {
+    background: linear-gradient(135deg, #667eea10, #764ba210);
+    border: 2px solid #667eea30;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.password-strength {
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+#strengthBar {
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s, background 0.3s;
+}
+
+.otp-section {
+    background: linear-gradient(135deg, #4ecdc410, #ff6b6b10);
+    border: 2px solid #4ecdc430;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.security-badge {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(0,0,0,0.8);
+    color: #4ecdc4;
+    padding: 8px 15px;
+    border-radius: 50px;
+    font-size: 12px;
+    z-index: 9999;
+    border: 1px solid #4ecdc4;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(78, 205, 196, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(78, 205, 196, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(78, 205, 196, 0); }
+}
+
+.access-log {
+    max-height: 300px;
+    overflow-y: auto;
+    background: #1a1a1a;
+    color: #00ff00;
+    font-family: monospace;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+.log-entry {
+    border-bottom: 1px solid #333;
+    padding: 5px;
+    font-size: 12px;
+}
+
+.log-entry.success { color: #4ecdc4; }
+.log-entry.failed { color: #ff6b6b; }
