@@ -1,0 +1,19 @@
+<!-- Create Room Modal ke andar - Password section -->
+<div class="password-section" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+    <h3>🔐 Room Security</h3>
+    <input type="password" id="roomPassword" placeholder="Create strong password" 
+           style="width: 100%; padding: 10px; margin: 10px 0; border: 2px solid #667eea; border-radius: 5px;">
+    <div class="password-strength" style="height: 5px; background: #e0e0e0; border-radius: 5px; margin: 10px 0;">
+        <div id="strengthBar" style="height: 100%; width: 0%; background: red; border-radius: 5px;"></div>
+    </div>
+    <p style="font-size: 12px; color: #666;">Password must have: 8+ chars, 1 number, 1 uppercase, 1 lowercase</p>
+</div>
+
+<!-- Join Room Modal ke andar - OTP section -->
+<div class="otp-section" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+    <h3>📱 Two-Factor Authentication</h3>
+    <p style="font-size: 14px;">Enter OTP sent to room creator's phone</p>
+    <input type="text" id="otpInput" placeholder="Enter 6-digit OTP" maxlength="6"
+           style="width: 100%; padding: 10px; margin: 10px 0; border: 2px solid #667eea; border-radius: 5px;">
+    <button onclick="verifyOTP()" class="btn">Verify OTP</button>
+</div>
