@@ -318,3 +318,81 @@
 <button id="backToTop" onclick="scrollToTop()" style="display: none; position: fixed; bottom: 30px; right: 30px; background: #667eea; color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
     ↑
 </button>
+<!-- ========== NEW PROFESSIONAL SECTIONS ========== -->
+
+<!-- Success Stories Section -->
+<section class="success-stories">
+    <h2>❤️ Love Stories</h2>
+    <div class="stories-slider">
+        <div class="story-card">
+            <img src="images/couple1.jpg" alt="Raj & Priya">
+            <h3>Raj & Priya</h3>
+            <p>"LoveSync ne humein 10000 km door bhi paas rakha"</p>
+            <span class="since">Together since 2024</span>
+        </div>
+        <div class="story-card">
+            <img src="images/couple2.jpg" alt="Alex & Sam">
+            <h3>Alex & Sam</h3>
+            <p>"Video calls feel like real meetings"</p>
+            <span class="since">Together since 2023</span>
+        </div>
+    </div>
+</section>
+
+<!-- Blog Preview Section -->
+<section class="blog-preview">
+    <h2>📝 Relationship Tips</h2>
+    <div class="blog-grid">
+        <article class="blog-card">
+            <img src="images/blog1.jpg" alt="Long Distance Tips">
+            <h3>10 Tips for Long Distance Love</h3>
+            <p>Stay connected across miles...</p>
+            <a href="blog/tips.html">Read More →</a>
+        </article>
+        <article class="blog-card">
+            <img src="images/blog2.jpg" alt="Surprise Ideas">
+            <h3>Virtual Surprise Ideas</h3>
+            <p>Make their day special...</p>
+            <a href="blog/surprises.html">Read More →</a>
+        </article>
+    </div>
+</section>
+
+<!-- Newsletter Signup -->
+<section class="newsletter">
+    <h2>💌 Love Letters in Your Inbox</h2>
+    <p>Get weekly relationship tips and stories</p>
+    <form id="newsletterForm" onsubmit="subscribeNewsletter(event)">
+        <input type="email" placeholder="Your email" required>
+        <button type="submit" class="btn">Subscribe ❤️</button>
+    </form>
+</section>
+
+<!-- Live Chat Widget -->
+<div id="chatWidget" class="chat-widget">
+    <div class="chat-header" onclick="toggleChat()">
+        <i class="fas fa-comment"></i> Need Help?
+    </div>
+    <div class="chat-body" style="display: none;">
+        <div class="chat-messages" id="supportMessages"></div>
+        <input type="text" placeholder="Type your message..." id="supportInput">
+        <button onclick="sendSupportMessage()">Send</button>
+    </div>
+</div>
+
+<!-- Rate Us Popup -->
+<div id="ratePopup" class="rate-popup" style="display: none;">
+    <div class="rate-content">
+        <span class="close" onclick="closeRatePopup()">&times;</span>
+        <h3>Enjoying LoveSync? ⭐</h3>
+        <p>Rate us 5 stars!</p>
+        <div class="stars">
+            <i class="fas fa-star" onclick="rate(1)"></i>
+            <i class="fas fa-star" onclick="rate(2)"></i>
+            <i class="fas fa-star" onclick="rate(3)"></i>
+            <i class="fas fa-star" onclick="rate(4)"></i>
+            <i class="fas fa-star" onclick="rate(5)"></i>
+        </div>
+        <button onclick="closeRatePopup()">Later</button>
+    </div>
+</div>
