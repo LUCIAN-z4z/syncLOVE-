@@ -3,26 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SyncLOVE 💕</title>
+    <title>SyncLOVE - Long Distance Couple 💕</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Jitsi Meet for Video Call -->
+    <script src='https://meet.jit.si/external_api.js'></script>
 </head>
 <body>
-    <div class="container">
-        <h1>💕 SyncLOVE 💕</h1>
-        <p>Long Distance Couple</p>
+    <nav class="navbar">
+        <h2>💕 SyncLOVE</h2>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#gallery">Gallery</a>
+            <a href="#playlist">Playlist</a>
+            <a href="#chat">Chat</a>
+            <a href="#calendar">Calendar</a>
+        </div>
+    </nav>
+
+    <!-- Home Section with Countdown -->
+    <section id="home" class="hero">
+        <h1 class="glow-text">[Aapka Naam] ❤️ [Partner Naam]</h1>
+        <p class="distance">📍 Long Distance Love</p>
         
-        <div class="counter-box">
-            <h2>Milne mein bacha:</h2>
-            <div id="countdown" class="timer">00:00:00</div>
+        <div class="countdown-container">
+            <h2>⏰ Milne mein bacha:</h2>
+            <div id="countdown" class="countdown"></div>
         </div>
 
-        <div class="actions">
-            <button onclick="sendLove()">🤗 Virtual Hug</button>
-            <button onclick="sendKiss()">💋 Virtual Kiss</button>
+        <div class="action-buttons">
+            <button onclick="sendHug()" class="btn hug">🤗 Hug</button>
+            <button onclick="sendKiss()" class="btn kiss">💋 Kiss</button>
+            <button onclick="openVideoCall()" class="btn video">📹 Video Call</button>
         </div>
+        <div id="actionMessage" class="message"></div>
+    </section>
 
-        <div id="message" class="message"></div>
-    </div>
+    <!-- Video Call Section -->
+    <section id="videocall" class="video-section">
+        <h2>📹 Video Call</h2>
+        <div id="meet" style="height: 500px; display: none;"></div>
+        <button onclick="startVideoCall()" class="btn start-call">Start Call</button>
+        <button onclick="shareScreen()" class="btn share">🖥️ Share Screen</button>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery">
+        <h2>📸 Our Gallery</h2>
+        <div class="gallery-grid" id="galleryGrid">
+            <!-- Photos will be added here -->
+        </div>
+        <div class="upload-section">
+            <input type="file" id="photoUpload" accept="image/*" multiple>
+            <button onclick="uploadPhotos()" class="btn upload">📤 Add Photos</button>
+        </div>
+    </section>
+
+    <!-- Common Playlist -->
+    <section id="playlist" class="playlist">
+        <h2>🎵 Our Common Playlist</h2>
+        <div class="music-controls">
+            <button onclick="syncPlay()" class="btn">▶️ Play Together</button>
+            <button onclick="syncPause()" class="btn">⏸️ Pause</button>
+        </div>
+        <div class="playlist-container" id="playlistContainer">
+            <!-- Playlist items -->
+            <div class="playlist-item">
+                <span>🎵 Perfect - Ed Sheeran</span>
+                <button onclick="playSong('perfect')">Play</button>
+            </div>
+            <div class="playlist-item">
+                <span>🎵 Tum Hi Ho - Arijit Singh</span>
+                <button onclick="playSong('tumhihai')">Play</button>
+            </div>
+            <div class="playlist-item">
+                <span>🎵 Teri Meri - Rahat Fateh</span>
+                <button onclick="playSong('terimeri')">Play</button>
+            </div>
+        </div>
+        <div class="add-song">
+            <input type="text" id="songLink" placeholder="YouTube/Spotify Link">
+            <button onclick="addSong()" class="btn">➕ Add Song</button>
+        </div>
+    </section>
+
+    <!-- Private Chat -->
+    <section id="chat" class="chat">
+        <h2>💬 Private Chat</h2>
+        <div class="chat-container" id="chatMessages">
+            <!-- Messages appear here -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chatMessage" placeholder="Type your message...">
+            <button onclick="sendMessage()" class="btn send">📤 Send</button>
+        </div>
+        <div class="emoji-picker">
+            <span onclick="addEmoji('😊')">😊</span>
+            <span onclick="addEmoji('❤️')">❤️</span>
+            <span onclick="addEmoji('😘')">😘</span>
+            <span onclick="addEmoji('🥺')">🥺</span>
+            <span onclick="addEmoji('💕')">💕</span>
+        </div>
+    </section>
+
+    <!-- Daily Questions -->
+    <section id="questions" class="questions">
+        <h2>❓ Daily Love Questions</h2>
+        <div class="question-box" id="questionBox">
+            <p id="dailyQuestion">Loading question...</p>
+            <input type="text" id="answerInput" placeholder="Your answer...">
+            <button onclick="submitAnswer()" class="btn">📝 Submit</button>
+        </div>
+        <div class="previous-answers" id="previousAnswers"></div>
+    </section>
+
+    <!-- Shared Calendar -->
+    <section id="calendar" class="calendar">
+        <h2>📅 Our Schedule</h2>
+        <div class="calendar-controls">
+            <button onclick="prevMonth()">◀</button>
+            <h3 id="currentMonth"></h3>
+            <button onclick="nextMonth()">▶</button>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+        <div class="add-event">
+            <input type="date" id="eventDate">
+            <input type="text" id="eventDesc" placeholder="Event description">
+            <button onclick="addEvent()" class="btn">➕ Add Event</button>
+        </div>
+        <div class="events-list" id="eventsList"></div>
+    </section>
+
+    <!-- Quizzes -->
+    <section id="quizzes" class="quizzes">
+        <h2>🧠 Love Quiz</h2>
+        <div class="quiz-container" id="quizContainer">
+            <p id="quizQuestion">How well do you know each other?</p>
+            <div id="quizOptions"></div>
+            <button onclick="checkQuizAnswer()" class="btn">Check Answer</button>
+        </div>
+        <div class="quiz-score" id="quizScore"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>Made with ❤️ for Long Distance Couples</p>
+        <p>Days Together: <span id="daysTogether">0</span></p>
+    </footer>
+
     <script src="script.js"></script>
 </body>
-</html>
+    </html>
