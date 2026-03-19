@@ -161,3 +161,342 @@ document.addEventListener('DOMContentLoaded', function() {
         card.style.transition = 'all 0.5s ease';
     });
 });
+// ========== HIGH-LEVEL SECURITY ==========
+
+// 1. SECURE ROOM ID GENERATION
+function generateSecureRoomID() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let id = '';
+    const randomValues = new Uint8Array(16);
+    crypto.getRandomValues(randomValues);
+    
+    for (let i = 0; i < 16; i++) {
+        id += chars[randomValues[i] % chars.length];
+    }
+    const timestamp = Date.now().toString(36).toUpperCase();
+    return `${id}-${timestamp}`;
+}
+
+// 2. DEVICE FINGERPRINTING
+async function generateFingerprint() {
+    const components = [];
+    components.push(navigator.userAgent);
+    components.push(navigator.language);
+    components.push(screen.width + 'x' + screen.height);
+    components.push(navigator.hardwareConcurrency);
+    
+    try {
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+        components.push(ipData.ip);
+    } catch (e) {}
+    
+    const fingerprint = await sha256(components.join('|||'));
+    localStorage.setItem('deviceFingerprint', fingerprint);
+    return fingerprint;
+}
+
+// SHA-256 Hash
+async function sha256(message) {
+    const msgBuffer = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// 3. PASSWORD STRENGTH CHECKER
+function checkPasswordStrength(password) {
+    let strength = 0;
+    
+    if (password.length >= 8) strength += 25;
+    if (password.match(/[a-z]/)) strength += 25;
+    if (password.match(/[A-Z]/)) strength += 25;
+    if (password.match(/[0-9]/)) strength += 25;
+    
+    const bar = document.getElementById('strengthBar');
+    if (bar) {
+        bar.style.width = strength + '%';
+        if (strength <= 50) bar.style.background = 'red';
+        else if (strength <= 75) bar.style.background = 'orange';
+        else bar.style.background = 'green';
+    }
+    
+    return strength === 100;
+}
+
+// 4. ROOM DATABASE (in-memory for demo)
+const secureRooms = {};
+
+// 5. CREATE SECURE ROOM
+function createSecureRoom() {
+    const password = document.getElementById('roomPassword').value;
+    
+    if (!checkPasswordStrength(password)) {
+        alert('❌ Password is not strong enough!');
+        return false;
+    }
+    
+    const roomId = generateSecureRoomID();
+    const fingerprint = localStorage.getItem('deviceFingerprint');
+    
+    secureRooms[roomId] = {
+        id: roomId,
+        password: password,
+        creatorFingerprint: fingerprint,
+        allowedDevices: [fingerprint],
+        accessLog: [],
+        createdAt: Date.now(),
+        expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000) // 30 days
+    };
+    
+    // Store room info
+    localStorage.setItem('currentRoom', roomId);
+    localStorage.setItem('room_' + roomId, JSON.stringify(secureRooms[roomId]));
+    
+    // Generate OTP for partner
+    generateOTP(roomId);
+    
+    alert('✅ Secure room created! Share this ID with partner: ' + roomId);
+    return roomId;
+}
+
+// 6. GENERATE OTP
+function generateOTP(roomId) {
+    const otp = Math.floor(100000 + Math.random() * 900000);
+    const otpData = {
+        code: otp,
+        roomId: roomId,
+        expires: Date.now() + 300000 // 5 minutes
+    };
+    
+    localStorage.setItem('otp_' + roomId, JSON.stringify(otpData));
+    
+    // In real app, send via SMS/Email
+    alert('🔐 Your OTP for partner: ' + otp + '\nShare this securely!');
+    return otp;
+}
+
+// 7. VERIFY OTP
+function verifyOTP() {
+    const enteredOTP = document.getElementById('otpInput').value;
+    const roomId = localStorage.getItem('currentRoom');
+    
+    const stored = JSON.parse(localStorage.getItem('otp_' + roomId));
+    
+    if (!stored || stored.expires < Date.now()) {
+        alert('❌ OTP expired!');
+        return false;
+    }
+    
+    if (stored.code == enteredOTP) {
+        localStorage.removeItem('otp_' + roomId);
+        alert('✅ OTP verified! You can now join the room.');
+        return true;
+    }
+    
+    alert('❌ Invalid OTP!');
+    return false;
+}
+
+// 8. RATE LIMITING
+const rateLimits = {};
+
+function checkRateLimit(action, userId) {
+    const key = action + '_' + userId;
+    const now = Date.now();
+    
+    if (!rateLimits[key]) {
+        rateLimits[key] = { attempts: 1, firstAttempt: now };
+        return true;
+    }
+    
+    const limit = rateLimits[key];
+    
+    if (now - limit.firstAttempt < 60000) { // 1 minute
+        limit.attempts++;
+        
+        if (limit.attempts > 5) {
+            alert('⏰ Too many attempts. Try after 1 minute.');
+            return false;
+        }
+    } else {
+        limit.attempts = 1;
+        limit.firstAttempt = now;
+    }
+    
+    return true;
+}
+
+// 9. SECURE JOIN ROOM
+async function secureJoinRoom(roomId, password) {
+    // Rate limit check
+    const userId = localStorage.getItem('deviceFingerprint') || 'unknown';
+    if (!checkRateLimit('JOIN', userId)) return false;
+    
+    // Get room data
+    const roomData = localStorage.getItem('room_' + roomId);
+    if (!roomData) {
+        alert('❌ Room not found!');
+        return false;
+    }
+    
+    const room = JSON.parse(roomData);
+    
+    // Check expiry
+    if (room.expiresAt < Date.now()) {
+        alert('❌ Room expired!');
+        return false;
+    }
+    
+    // Verify password
+    if (room.password !== password) {
+        alert('❌ Wrong password!');
+        return false;
+    }
+    
+    // Get device fingerprint
+    const fingerprint = localStorage.getItem('deviceFingerprint');
+    
+    // Check if device is allowed
+    if (!room.allowedDevices.includes(fingerprint)) {
+        // Request OTP verification
+        const otpVerified = verifyOTP();
+        if (!otpVerified) return false;
+        
+        // Add device to allowed list
+        room.allowedDevices.push(fingerprint);
+        localStorage.setItem('room_' + roomId, JSON.stringify(room));
+    }
+    
+    // Log access
+    logAccess(roomId, 'SUCCESS');
+    
+    alert('✅ Successfully joined secure room!');
+    return true;
+}
+
+// 10. ACCESS LOGGING
+function logAccess(roomId, status) {
+    const log = {
+        timestamp: Date.now(),
+        roomId: roomId,
+        status: status,
+        fingerprint: localStorage.getItem('deviceFingerprint'),
+        userAgent: navigator.userAgent
+    };
+    
+    const logs = JSON.parse(localStorage.getItem('accessLogs') || '[]');
+    logs.push(log);
+    localStorage.setItem('accessLogs', JSON.stringify(logs.slice(-50))); // Keep last 50
+    
+    // Also store in room-specific log
+    const roomData = JSON.parse(localStorage.getItem('room_' + roomId) || '{}');
+    if (!roomData.accessLog) roomData.accessLog = [];
+    roomData.accessLog.push(log);
+    localStorage.setItem('room_' + roomId', JSON.stringify(roomData));
+}
+
+// 11. ENCRYPTION FOR MESSAGES
+function encryptMessage(message, roomId) {
+    const key = roomId.slice(-8); // Simple key from room ID
+    let encrypted = '';
+    
+    for (let i = 0; i < message.length; i++) {
+        const charCode = message.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+        encrypted += String.fromCharCode(charCode);
+    }
+    
+    return btoa(encrypted); // Base64 encode
+}
+
+function decryptMessage(encryptedMessage, roomId) {
+    try {
+        const key = roomId.slice(-8);
+        const encrypted = atob(encryptedMessage);
+        let decrypted = '';
+        
+        for (let i = 0; i < encrypted.length; i++) {
+            const charCode = encrypted.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+            decrypted += String.fromCharCode(charCode);
+        }
+        
+        return decrypted;
+    } catch (e) {
+        return encryptedMessage; // If not encrypted, return original
+    }
+}
+
+// 12. SESSION MANAGEMENT
+const sessions = {};
+
+function createSession(userId) {
+    const sessionId = generateSecureRoomID();
+    sessions[sessionId] = {
+        userId: userId,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 3600000, // 1 hour
+        fingerprint: localStorage.getItem('deviceFingerprint')
+    };
+    
+    localStorage.setItem('activeSession', sessionId);
+    return sessionId;
+}
+
+function validateSession() {
+    const sessionId = localStorage.getItem('activeSession');
+    if (!sessionId) return false;
+    
+    const session = sessions[sessionId];
+    if (!session) return false;
+    
+    if (session.expiresAt < Date.now()) {
+        delete sessions[sessionId];
+        localStorage.removeItem('activeSession');
+        return false;
+    }
+    
+    // Check if same device
+    const currentFingerprint = localStorage.getItem('deviceFingerprint');
+    if (session.fingerprint !== currentFingerprint) {
+        return false;
+    }
+    
+    return true;
+}
+
+// 13. INITIALIZE SECURITY ON PAGE LOAD
+document.addEventListener('DOMContentLoaded', async function() {
+    // Generate device fingerprint if not exists
+    if (!localStorage.getItem('deviceFingerprint')) {
+        await generateFingerprint();
+    }
+    
+    // Check for active session
+    if (validateSession()) {
+        console.log('✅ Active session found');
+        document.body.classList.add('authenticated');
+    }
+    
+    // Add password strength checker listener
+    const passwordInput = document.getElementById('roomPassword');
+    if (passwordInput) {
+        passwordInput.addEventListener('input', function(e) {
+            checkPasswordStrength(e.target.value);
+        });
+    }
+});
+
+// 14. OVERRIDE EXISTING FUNCTIONS WITH SECURE ONES
+// Replace original createRoom function
+window.originalCreateRoom = window.createRoom || function(){};
+window.createRoom = function() {
+    return createSecureRoom();
+};
+
+// Replace original joinRoom function
+window.originalJoinRoom = window.joinRoom || function(){};
+window.joinRoom = function() {
+    const roomId = prompt('Enter Room ID:');
+    const password = prompt('Enter Room Password:');
+    return secureJoinRoom(roomId, password);
+};
