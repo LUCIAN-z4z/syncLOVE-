@@ -681,3 +681,322 @@ function loadProfileData() {
     if (bio) document.getElementById('profileBio').value = bio;
     if (photo) document.querySelector('.profile-photo img').src = photo;
 }
+// ========== ADVANCED PROFESSIONAL FEATURES ==========
+
+// 1. Newsletter Subscription
+function subscribeNewsletter(event) {
+    event.preventDefault();
+    const email = event.target.querySelector('input').value;
+    
+    // Save to localStorage
+    let subscribers = JSON.parse(localStorage.getItem('subscribers') || '[]');
+    subscribers.push({
+        email: email,
+        date: new Date().toISOString()
+    });
+    localStorage.setItem('subscribers', JSON.stringify(subscribers));
+    
+    alert('✅ Thanks for subscribing! Check your email for love letters 💌');
+    event.target.reset();
+}
+
+// 2. Live Chat Support
+function toggleChat() {
+    const chatBody = document.querySelector('.chat-body');
+    chatBody.style.display = chatBody.style.display === 'none' ? 'flex' : 'none';
+}
+
+function sendSupportMessage() {
+    const input = document.getElementById('supportInput');
+    const message = input.value.trim();
+    
+    if (message) {
+        const messagesDiv = document.getElementById('supportMessages');
+        
+        // User message
+        messagesDiv.innerHTML += `
+            <div style="text-align: right; margin: 5px;">
+                <span style="background: #667eea; color: white; padding: 5px 10px; border-radius: 10px;">${message}</span>
+            </div>
+        `;
+        
+        // Auto reply
+        setTimeout(() => {
+            messagesDiv.innerHTML += `
+                <div style="text-align: left; margin: 5px;">
+                    <span style="background: #e0e0e0; padding: 5px 10px; border-radius: 10px;">Thanks for messaging! We'll reply soon ❤️</span>
+                </div>
+            `;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }, 1000);
+        
+        input.value = '';
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+}
+
+// 3. Rating System
+let hasRated = localStorage.getItem('hasRated');
+
+function showRatePopup() {
+    if (!hasRated && Math.random() > 0.5) { // Show randomly
+        setTimeout(() => {
+            document.getElementById('ratePopup').style.display = 'block';
+        }, 30000); // Show after 30 seconds
+    }
+}
+
+function rate(stars) {
+    localStorage.setItem('hasRated', 'true');
+    localStorage.setItem('userRating', stars);
+    
+    alert(`🌟 Thanks for ${stars} stars! You're the best!`);
+    closeRatePopup();
+    
+    // Track rating
+    trackEvent('Rating', 'Given', stars + ' stars');
+}
+
+function closeRatePopup() {
+    document.getElementById('ratePopup').style.display = 'none';
+}
+
+// 4. Keyboard Shortcuts
+document.addEventListener('keydown', function(e) {
+    // Ctrl + H -> Go Home
+    if (e.ctrlKey && e.key === 'h') {
+        window.location.href = '/';
+    }
+    
+    // Ctrl + R -> Go to Room
+    if (e.ctrlKey && e.key === 'r') {
+        window.location.href = '/room.html';
+    }
+    
+    // Ctrl + P -> Open Profile
+    if (e.ctrlKey && e.key === 'p') {
+        window.location.href = '/profile.html';
+    }
+    
+    // Ctrl + D -> Toggle Dark Mode
+    if (e.ctrlKey && e.key === 'd') {
+        toggleDarkMode();
+    }
+    
+    // / -> Focus Search
+    if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+        e.preventDefault();
+        document.getElementById('searchInput')?.focus();
+    }
+});
+
+// 5. Show Keyboard Shortcuts
+function showShortcuts() {
+    const modal = document.createElement('div');
+    modal.className = 'shortcuts-modal';
+    modal.innerHTML = `
+        <h3>⌨️ Keyboard Shortcuts</h3>
+        <div class="shortcut-item"><span>Home</span> <span class="shortcut-key">Ctrl + H</span></div>
+        <div class="shortcut-item"><span>Room</span> <span class="shortcut-key">Ctrl + R</span></div>
+        <div class="shortcut-item"><span>Profile</span> <span class="shortcut-key">Ctrl + P</span></div>
+        <div class="shortcut-item"><span>Dark Mode</span> <span class="shortcut-key">Ctrl + D</span></div>
+        <div class="shortcut-item"><span>Search</span> <span class="shortcut-key">/</span></div>
+        <button onclick="this.parentElement.remove()" style="margin-top: 1rem;">Close</button>
+    `;
+    document.body.appendChild(modal);
+}
+
+// 6. Multi-language Support
+const translations = {
+    'hi': {
+        'create_room': 'रूम बनाएं',
+        'join_room': 'रूम जॉइन करें',
+        'video_call': 'वीडियो कॉल'
+    },
+    'es': {
+        'create_room': 'Crear Sala',
+        'join_room': 'Unirse a Sala',
+        'video_call': 'Videollamada'
+    },
+    'fr': {
+        'create_room': 'Créer une Salle',
+        'join_room': 'Rejoindre la Salle',
+        'video_call': 'Appel Vidéo'
+    }
+};
+
+function changeLanguage(lang) {
+    localStorage.setItem('language', lang);
+    
+    // Translate page elements
+    document.querySelectorAll('[data-translate]').forEach(el => {
+        const key = el.getAttribute('data-translate');
+        if (translations[lang] && translations[lang][key]) {
+            el.textContent = translations[lang][key];
+        }
+    });
+}
+
+// 7. Offline Detection
+window.addEventListener('online', function() {
+    document.querySelector('.offline-indicator')?.remove();
+    showNotification('✅ Back online!');
+});
+
+window.addEventListener('offline', function() {
+    if (!document.querySelector('.offline-indicator')) {
+        const indicator = document.createElement('div');
+        indicator.className = 'offline-indicator';
+        indicator.innerHTML = '📴 You\'re offline. Some features may not work.';
+        document.body.appendChild(indicator);
+    }
+});
+
+// 8. Accessibility Features
+function toggleHighContrast() {
+    document.body.classList.toggle('high-contrast');
+    localStorage.setItem('highContrast', document.body.classList.contains('high-contrast'));
+}
+
+function toggleLargeText() {
+    document.body.classList.toggle('large-text');
+    localStorage.setItem('largeText', document.body.classList.contains('large-text'));
+}
+
+function toggleReduceMotion() {
+    document.body.classList.toggle('reduce-motion');
+    localStorage.setItem('reduceMotion', document.body.classList.contains('reduce-motion'));
+}
+
+// 9. Load saved preferences
+['highContrast', 'largeText', 'reduceMotion'].forEach(pref => {
+    if (localStorage.getItem(pref) === 'true') {
+        document.body.classList.add(pref);
+    }
+});
+
+// 10. Download App Banner
+function showAppBanner() {
+    if (!localStorage.getItem('appBannerClosed')) {
+        const banner = document.createElement('div');
+        banner.className = 'app-banner';
+        banner.innerHTML = `
+            📱 Get the LoveSync App! 
+            <button onclick="downloadApp()">Download</button>
+            <span onclick="this.parentElement.remove(); localStorage.setItem('appBannerClosed', 'true')" style="float: right; cursor: pointer;">✕</span>
+        `;
+        document.body.insertBefore(banner, document.body.firstChild);
+    }
+}
+
+function downloadApp() {
+    alert('App download link will be sent to your email! (Coming soon)');
+}
+
+// 11. Track User Behavior
+function trackUserBehavior() {
+    const behavior = {
+        pages: JSON.parse(localStorage.getItem('visitedPages') || '[]'),
+        timeOnSite: 0,
+        features: JSON.parse(localStorage.getItem('usedFeatures') || '[]')
+    };
+    
+    // Track current page
+    const pages = behavior.pages;
+    if (!pages.includes(window.location.pathname)) {
+        pages.push(window.location.pathname);
+        localStorage.setItem('visitedPages', JSON.stringify(pages));
+    }
+    
+    // Track time
+    setInterval(() => {
+        behavior.timeOnSite += 1;
+        localStorage.setItem('timeOnSite', behavior.timeOnSite);
+    }, 60000);
+}
+
+// 12. Share Website
+function shareWebsite() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'LoveSync',
+            text: 'Create your private couple space! ❤️',
+            url: window.location.href
+        });
+    } else {
+        prompt('Share this link:', window.location.href);
+    }
+}
+
+// 13. Report Bug
+function reportBug() {
+    const bug = prompt('Describe the bug:');
+    if (bug) {
+        const bugs = JSON.parse(localStorage.getItem('bugReports') || '[]');
+        bugs.push({
+            description: bug,
+            page: window.location.pathname,
+            time: new Date().toISOString()
+        });
+        localStorage.setItem('bugReports', JSON.stringify(bugs));
+        alert('✅ Bug reported! We\'ll fix it soon.');
+    }
+}
+
+// 14. Feedback Form
+function showFeedbackForm() {
+    const feedback = prompt('How can we improve LoveSync?');
+    if (feedback) {
+        const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+        feedbacks.push({
+            feedback: feedback,
+            rating: localStorage.getItem('userRating'),
+            time: new Date().toISOString()
+        });
+        localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+        alert('❤️ Thanks for your feedback!');
+    }
+}
+
+// 15. Initialize everything
+document.addEventListener('DOMContentLoaded', function() {
+    // Show rate popup after some time
+    showRatePopup();
+    
+    // Track behavior
+    trackUserBehavior();
+    
+    // Show app banner
+    showAppBanner();
+    
+    // Add shortcuts help
+    const shortcutsHelp = document.createElement('div');
+    shortcutsHelp.className = 'shortcuts-help';
+    shortcutsHelp.innerHTML = '⌨️ Shortcuts';
+    shortcutsHelp.onclick = showShortcuts;
+    document.body.appendChild(shortcutsHelp);
+    
+    // Add language selector
+    const langSelector = document.createElement('div');
+    langSelector.className = 'language-selector';
+    langSelector.innerHTML = `
+        <button class="lang-btn"><i class="fas fa-globe"></i> 🌐</button>
+        <div class="lang-dropdown">
+            <a href="#" onclick="changeLanguage('en')">English</a>
+            <a href="#" onclick="changeLanguage('hi')">हिन्दी</a>
+            <a href="#" onclick="changeLanguage('es')">Español</a>
+            <a href="#" onclick="changeLanguage('fr')">Français</a>
+        </div>
+    `;
+    document.body.appendChild(langSelector);
+    
+    // Accessibility menu
+    const accessibilityBtn = document.createElement('div');
+    accessibilityBtn.style.cssText = 'position: fixed; top: 20px; left: 20px; z-index: 999;';
+    accessibilityBtn.innerHTML = `
+        <button onclick="toggleHighContrast()" title="High Contrast">👁️</button>
+        <button onclick="toggleLargeText()" title="Large Text">A+</button>
+        <button onclick="toggleReduceMotion()" title="Reduce Motion">🔄</button>
+    `;
+    document.body.appendChild(accessibilityBtn);
+});
