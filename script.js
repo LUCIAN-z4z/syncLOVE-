@@ -1,4 +1,41 @@
-// Modal Functions
+// ========== EMERGENCY BUTTON FIX ==========
+window.onload = function() {
+    console.log("✅ Site loaded successfully!");
+    
+    // Force fix buttons
+    setTimeout(function() {
+        // Create Room button
+        const createBtn = document.querySelector('.create-card') || document.querySelector('button:contains("Create")');
+        if (createBtn) {
+            createBtn.onclick = function() {
+                showCreateModal();
+            };
+        }
+        
+        // Join Room button
+        const joinBtn = document.querySelector('.join-card') || document.querySelector('button:contains("Join")');
+        if (joinBtn) {
+            joinBtn.onclick = function() {
+                showJoinModal();
+            };
+        }
+        
+        console.log("🔧 Buttons fixed!");
+    }, 500);
+};
+
+// Modal functions (agar nahi hain to ye add karo)
+function showCreateModal() {
+    alert("✅ Create Room clicked! (Working)");
+    // Tumhara existing code yahan aayega
+    document.getElementById('createModal').style.display = 'block';
+}
+
+function showJoinModal() {
+    alert("✅ Join Room clicked! (Working)");
+    // Tumhara existing code yahan aayega
+    document.getElementById('joinModal').style.display = 'block';
+}// Modal Functions
 function showCreateModal() {
     document.getElementById('createModal').style.display = 'block';
     document.body.style.overflow = 'hidden';
