@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoveSync Room - Your Private Space</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src='https://meet.jit.si/external_api.js'></script>
+    <style>
+        /* Room Specific Styles */
+        .room-container {
+            padding-top: 80px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .room-header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .room-info {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .room-badge {
+            background: linear-gradient(135deg, #ff4b6e, #ff6b6b);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+
+        .share-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: 0.3s;
+        }
+
+        .share-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            grid-column: span 3;
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            height: fit-content;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .partner-status {
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4ecdc4;
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(78, 205, 196, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(78, 205, 196, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(78, 205, 196, 0); }
+        }
+
+        .menu-item {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .menu-item i {
+            width: 24px;
+        }
+
+        /* Main Content */
+        .main-content {
+            grid-column: span 9;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            min-height: 600px;
+        }
+
+        /* Feature Sections */
+        .feature-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .feature-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Video Call Section */
+        #meet {
+            width: 100%;
+            height: 500px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .call-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* Chat Section */
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            max-width: 70%;
+        }
+
+        .message.sent {
+            margin-left: auto;
+        }
+
+        .message-content {
+            background: #667eea;
+            color: white;
+            padding: 1rem;
+            border-radius: 15px 15px 0 15px;
+        }
+
+        .message.received .message-content {
+            background: #f0f0f0;
+            color: #333;
+            border-radius: 15px 15px 15px 0;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            aspect-ratio: 1;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.3s;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            padding: 1rem;
+            transform: translateY(100%);
+            transition: 0.3s;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        /* Countdown Timer */
+        .countdown-display {
+            font-size: 4rem;
+            font-weight: 800;
+            text-align: center;
+            color: #ff4b6e;
+            margin: 2rem 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .date-picker {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .date-picker input {
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        /* Calendar */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin: 2rem 0;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .calendar-day:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            width: 5px;
+            height: 5px;
+            background: #ff4b6e;
+            border-radius: 50%;
+        }
+
+        .event-badge {
+            background: #ff4b6e;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            position: absolute;
+            top: 2px;
+            right: 2px;
+        }
+
+        /* Playlist */
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .playlist-item:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .playlist-item.playing {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .playlist-controls {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .sync-btn {
+            background: #4ecdc4;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: 0.3s;
+        }
+
+        .sync-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Quiz Section */
+        .quiz-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 1rem 0;
+        }
+
+        .quiz-option {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .quiz-option:hover {
+            border-color: #667eea;
+        }
+
+        .quiz-option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .create-quiz-btn {
+            background: #ff4b6e;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 1rem 0;
+        }
+
+        /* Daily Questions */
+        .question-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+
+        .previous-answers {
+            margin-top: 2rem;
+        }
+
+        .answer-history {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 0.5rem 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar, .main-content {
+                grid-column: span 1;
+            }
+            
+            .countdown-display {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .room-info {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .countdown-display {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="room-container">
+        <!-- Header -->
+        <div class="room-header">
+            <div class="logo">
+                <i class="fas fa-heart" style="color: #ff4b6e;"></i>
+                <span>LoveSync</span>
+            </div>
+            <div class="room-info">
+                <span class="room-badge">
+                    <i class="fas fa-hashtag"></i> Room: LOVE-12345
+                </span>
+                <span class="status-indicator"></span>
+                <span>Partner Online</span>
+                <button class="share-btn" onclick="shareRoom()">
+                    <i class="fas fa-share-alt"></i> Share Invite
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div class="dashboard">
+            <!-- Sidebar Menu -->
+            <div class="sidebar">
+                <div class="partner-status">
+                    <img src="https://via.placeholder.com/80x80/667eea/ffffff?text=❤️" 
+                         style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 1rem;">
+                    <h3>Your Partner</h3>
+                    <p><span class="status-indicator"></span> Online</p>
+                    <p style="color: #666; font-size: 0.9rem;">Last seen: Just now</p>
+                </div>
+                
+                <div class="menu-items">
+                    <div class="menu-item active" onclick="switchFeature('countdown')">
+                        <i class="fas fa-clock"></i> Countdown
+                    </div>
+                    <div class="menu-item" onclick="switchFeature('videocall')">
+                        <i class="fas fa-video"></i> Video Call
+                    </div>
+                    <div class="menu-item" onclick="switchFeature('chat')">
+                        <i class="fas fa-comments"></i> Private Chat
+                    </div>
+                    <div class="menu-item" onclick="switchFeature('gallery')">
+                        <i class="fas fa-images"></i> Photo Gallery
+                    </div>
+                    <div class="menu-item" onclick="switchFeature('playlist')">
+                        <i class="fas fa-music"></i> Common Playlist
+                    </div>
+                    <div class="menu-item" onclick="switchFeature('questions')">
+                        <i class="fas fa-question-circle"></i> Daily Questions
+                    </div>
+                    <div class="menu-item" onclick="switchFeature('quiz')">
+                        <i class="fas fa-puzzle-piece"></i> Love Quiz
+                    </div>
+                    <div class="menu-item" onclick="switchFeature('calendar')">
+                        <i class="fas fa-calendar"></i> Shared Calendar
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="main-content">
+                <!-- Countdown Section -->
+                <div id="countdownSection" class="feature-section active">
+                    <h2 class="section-title">
+                        <i class="fas fa-clock" style="color: #ff4b6e;"></i>
+                        Meeting Countdown
+                    </h2>
+                    <div class="countdown-display" id="mainCountdown">00d 00h 00m 00s</div>
+                    <div class="date-picker">
+                        <input type="datetime-local" id="setMeetingDate">
+                        <button class="share-btn" onclick="setMeetingDate()">
+                            <i class="fas fa-calendar-check"></i> Set Date
+                        </button>
+                    </div>
+                    <p style="color: #666; text-align: center;">
+                        <i class="fas fa-heart" style="color: #ff4b6e;"></i>
+                        Days together: <span id="daysTogether">0</span>
+                    </p>
+                </div>
+
+                <!-- Video Call Section -->
+                <div id="videocallSection" class="feature-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-video" style="color: #ff4b6e;"></i>
+                        Video Call
+                    </h2>
+                    <div id="meet"></div>
+                    <div class="call-controls">
+                        <button class="share-btn" onclick="startCall()">
+                            <i class="fas fa-phone"></i> Start Call
+                        </button>
+                        <button class="share-btn" onclick="shareScreen()">
+                            <i class="fas fa-desktop"></i> Share Screen
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Section -->
+                <div id="chatSection" class="feature-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-comments" style="color: #ff4b6e;"></i>
+                        Private Chat
+                    </h2>
+                    <div class="chat-messages" id="chatMessages"></div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInput" placeholder="Type your message...">
+                        <button class="share-btn" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                    <div class="emoji-picker" style="margin-top: 1rem;">
+                        <span onclick="addEmoji('😊')">😊</span>
+                        <span onclick="addEmoji('❤️')">❤️</span>
+                        <span onclick="addEmoji('😘')">😘</span>
+                        <span onclick="addEmoji('🥺')">🥺</span>
+                        <span onclick="addEmoji('💕')">💕</span>
+                        <span onclick="addEmoji('😍')">😍</span>
+                    </div>
+                </div>
+
+                <!-- Gallery Section -->
+                <div id="gallerySection" class="feature-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-images" style="color: #ff4b6e;"></i>
+                        Photo Gallery
+                    </h2>
+                    <div class="gallery-grid" id="galleryGrid"></div>
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <input type="file" id="photoUpload" accept="image/*" multiple style="display: none;">
+                        <button class="share-btn" onclick="document.getElementById('photoUpload').click()">
+                            <i class="fas fa-upload"></i> Upload Photos
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Playlist Section -->
+                <div id="playlistSection" class="feature-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-music" style="color: #ff4b6e;"></i>
+                        Common Playlist
+                    </h2>
+                    <div class="playlist-controls">
+                        <button class="sync-btn" onclick="syncPlay()">
+                            <i class="fas fa-play"></i> Play Together
+                        </button>
+                        <button class="sync-btn" onclick="syncPause()">
+                            <i class="fas fa-pause"></i> Pause
+                        </button>
+                    </div>
+                    <div id="playlistItems"></div>
+                    <div style="margin-top: 2rem;">
+                        <input type="text" id="newSong" placeholder="YouTube or Spotify URL" style="width: 70%; padding: 1rem;">
+                        <button class="share-btn" onclick="addSong()">
+                            <i class="fas fa-plus"></i> Add Song
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Daily Questions Section -->
+                <div id="questionsSection" class="feature-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-question-circle" style="color: #ff4b6e;"></i>
+                        Daily Questions
+                    </h2>
+                    <div class="question-card">
+                        <h3 id="dailyQuestion">How was your day today?</h3>
+                
