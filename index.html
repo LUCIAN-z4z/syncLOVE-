@@ -104,6 +104,44 @@
             </div>
         </div>
     </section>
+    </section>
+
+<!-- ========== FEEDBACK SECTION - YAHAN SE COPY KARO ========== -->
+<section id="feedback" style="background: white; padding: 4rem 2rem;">
+    <div style="max-width: 600px; margin: 0 auto; text-align: center;">
+        <h2 style="font-size: 2rem; color: #333; margin-bottom: 1rem;">
+            <i class="fas fa-comment-dots" style="color: #ff4b6e;"></i> 
+            We Value Your Feedback!
+        </h2>
+        <p style="color: #666; margin-bottom: 2rem;">Help us make SyncLOVE better for everyone</p>
+        
+        <div id="feedbackForm" style="background: #f8f9fa; padding: 2rem; border-radius: 20px;">
+            <input type="text" id="feedbackName" placeholder="Your Name" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #e0e0e0; border-radius: 10px;">
+            <input type="email" id="feedbackEmail" placeholder="Your Email (optional)" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #e0e0e0; border-radius: 10px;">
+            <select id="feedbackRating" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #e0e0e0; border-radius: 10px;">
+                <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
+                <option value="4">⭐⭐⭐⭐ - Good</option>
+                <option value="3">⭐⭐⭐ - Average</option>
+                <option value="2">⭐⭐ - Poor</option>
+                <option value="1">⭐ - Bad</option>
+            </select>
+            <textarea id="feedbackMessage" rows="4" placeholder="Your feedback... What do you like? What can we improve?" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #e0e0e0; border-radius: 10px;"></textarea>
+            <button onclick="submitFeedback()" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 1rem 2rem; border-radius: 10px; cursor: pointer; width: 100%;">Submit Feedback 💌</button>
+        </div>
+        
+        <div id="feedbackThanks" style="display: none; background: #4ecdc4; color: white; padding: 2rem; border-radius: 20px;">
+            <i class="fas fa-heart" style="font-size: 3rem;"></i>
+            <h3>Thank You! ❤️</h3>
+            <p>Your feedback helps us improve!</p>
+        </div>
+        
+        <div id="recentFeedback" style="margin-top: 3rem; text-align: left;">
+            <h3><i class="fas fa-star" style="color: #ffd93d;"></i> What Others Say</h3>
+            <div id="feedbackList"></div>
+        </div>
+    </div>
+</section>
+<!-- ========== FEEDBACK SECTION END ========== -->
 
     <!-- Create Room Modal -->
     <div id="createModal" class="modal">
