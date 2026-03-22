@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - SyncLOVE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .admin-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .admin-header h1 {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #333;
+        }
+
+        .owner-badge {
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            display: inline-block;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card i {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        /* Rooms Section */
+        .rooms-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .rooms-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-box input {
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            width: 250px;
+        }
+
+        /* Room Card */
+        .room-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .room-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .room-header {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .room-id {
+            font-family: monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .room-date {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .room-details {
+            padding: 1.5rem;
+            display: none;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .room-details.show {
+            display: block;
+        }
+
+        /* Members List */
+        .members-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .member-card {
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+            border-radius: 10px;
+            padding: 1rem;
+            min-width: 200px;
+            border-left: 4px solid #667eea;
+        }
+
+        .member-name {
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .member-name i {
+            color: #667eea;
+        }
+
+        .member-details {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .member-joined {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 0.3rem;
+        }
+
+        /* Access Logs */
+        .logs-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .log-entry {
+            border-bottom: 1px solid #f0f0f0;
+            padding: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .log-time {
+            color: #999;
+            font-size: 0.8rem;
+        }
+
+        .log-success {
+            color: #4ecdc4;
+        }
+
+        .log-failed {
+            color: #ff6b6b;
+        }
+
+        /* Buttons */
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #ff4b6e;
+        }
+
+        .btn-danger:hover {
+            background: #ff6b6b;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .rooms-header {
+                flex-direction: column;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .search-box input {
+                width: 100%;
+            }
+            
+            .member-card {
+                width: 100%;
+            }
+        }
+
+        /* Refresh Button */
+        .refresh-btn {
+            background: #4ecdc4;
+            margin-left: 1rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <h1>
+                <i class="fas fa-crown" style="color: #ffd700;"></i>
+                SyncLOVE Admin Panel
+            </h1>
+            <div class="owner-badge">
+                <i class="fas fa-check-circle"></i> Owner Mode Active
+            </div>
+            <p style="margin-top: 1rem; color: #666;">
+                <i class="fas fa-info-circle"></i> All room and member details are stored locally in browser
+            </p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-door-open"></i>
+                <div class="stat-number" id="totalRooms">0</div>
+                <div class="stat-label">Total Rooms Created</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <div class="stat-number" id="totalMembers">0</div>
+                <div class="stat-label">Total Members</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-user-plus"></i>
+                <div class="stat-number" id="activeToday">0</div>
+                <div class="stat-label">Joined Today</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-chart-line"></i>
+                <div class="stat-number" id="totalAccess">0</div>
+                <div class="stat-label">Total Access Logs</div>
+            </div>
+        </div>
+
+        <!-- Rooms Section -->
+        <div class="rooms-section">
+            <div class="rooms-header">
+                <h2><i class="fas fa-list"></i> All Rooms & Members</h2>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search room ID or member name...">
+                    <button class="btn" onclick="searchRooms()"><i class="fas fa-search"></i></button>
+                    <button class="btn refresh-btn" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                </div>
+            </div>
+            <div id="roomsList"></div>
+        </div>
+
+        <!-- Access Logs -->
+        <div class="logs-section">
+            <h2><i class="fas fa-history"></i> Recent Access Logs</h2>
+            <div id="logsList"></div>
+        </div>
+
+        <!-- Admin Actions -->
+        <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+            <button class="btn" onclick="exportData()">
+                <i class="fas fa-download"></i> Export All Data (JSON)
+            </button>
+            <button class="btn btn-danger" onclick="clearAllData()">
+                <i class="fas fa-trash"></i> Clear All Data
+            </button>
+            <button class="btn" onclick="window.location.href='index.html'">
+                <i class="fas fa-home"></i> Back to Home
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ========== DATA COLLECTION ==========
+        
+        // Store all access logs
+        let accessLogs = JSON.parse(localStorage.getItem('admin_access_logs') || '[]');
+        
+        // Function to log room access
+        function logRoomAccess(roomId, userName, action, status) {
+            const log = {
+                id: Date.now(),
+                roomId: roomId,
+                userName: userName,
+                action: action,
+                status: status,
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent
+            };
+            accessLogs.unshift(log);
+            // Keep only last 100 logs
+            if (accessLogs.length > 100) accessLogs.pop();
+            localStorage.setItem('admin_access_logs', JSON.stringify(accessLogs));
+        }
+        
+        // Get all rooms from localStorage
+        function getAllRooms() {
+            const rooms = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('room_') && key !== 'room_undefined') {
+                    try {
+                        const roomData = JSON.parse(localStorage.getItem(key));
+                        if (roomData && roomData.id) {
+                            rooms.push(roomData);
+                        }
+                    } catch(e) {
+                        console.log('Error parsing:', key);
+                    }
+                }
+            }
+            return rooms;
+        }
+        
+        // Get member details with additional info
+        function getMemberDetails(roomId, userName) {
+            // Get member's activity logs
+            const memberLogs = accessLogs.filter(log => 
+                log.roomId === roomId && log.userName === userName
+            );
+            
+            // Get member's last active
+            const lastActive = memberLogs.length > 0 ? memberLogs[0].timestamp : null;
+            
+            // Get member's first join
+            const firstJoin = memberLogs.filter(log => log.action === 'JOIN').pop()?.timestamp;
+            
+            return {
+                userName: userName,
+                lastActive: lastActive,
+                firstJoin: firstJoin,
+                totalActions: memberLogs.length
+            };
+        }
+        
+        // Load all data
+        function loadAllData() {
+            const rooms = getAllRooms();
+            
+            // Update stats
+            document.getElementById('totalRooms').innerHTML = rooms.length;
+            
+            let totalMembers = 0;
+            let joinedToday = 0;
+            const today = new Date().toDateString();
+            
+            rooms.forEach(room => {
+                if (room.members) {
+                    totalMembers += room.members.length;
+                    
+                    // Check who joined today
+                    room.members.forEach(member => {
+                        const memberDetail = getMemberDetails(room.id, member);
+                        if (memberDetail.firstJoin) {
+                            const joinDate = new Date(memberDetail.firstJoin).toDateString();
+                            if (joinDate === today) joinedToday++;
+                        }
+                    });
+                }
+            });
+            
+            document.getElementById('totalMembers').innerHTML = totalMembers;
+            document.getElementById('activeToday').innerHTML = joinedToday;
+            document.getElementById('totalAccess').innerHTML = accessLogs.length;
+            
+            // Display rooms
+            displayRooms(rooms);
+            
+            // Display logs
+            displayLogs();
+        }
+        
+        // Display rooms
+        function displayRooms(rooms) {
+            const container = document.getElementById('roomsList');
+            const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+            
+            let filteredRooms = rooms;
+            if (searchTerm) {
+                filteredRooms = rooms.filter(room => 
+                    room.id.toLowerCase().includes(searchTerm) ||
+                    (room.members && room.members.some(m => m.toLowerCase().includes(searchTerm)))
+                );
+            }
+            
+            if (filteredRooms.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No rooms found</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            filteredRooms.forEach((room, index) => {
+                const members = room.members || [];
+                const createdAt = room.createdAt ? new Date(room.createdAt).toLocaleString() : 'Unknown';
+                
+                html += `
+                    <div class="room-card">
+                        <div class="room-header" onclick="toggleRoom(${index})">
+                            <div>
+                                <span class="room-id"><i class="fas fa-hashtag"></i> ${room.id}</span>
+                                <span style="margin-left: 1rem; color: #666;">👥 ${members.length} member${members.length !== 1 ? 's' : ''}</span>
+                            </div>
+                            <div class="room-date">
+                                <i class="far fa-calendar-alt"></i> Created: ${createdAt}
+                            </div>
+                        </div>
+                        <div class="room-details" id="roomDetails-${index}">
+                            <h4><i class="fas fa-users"></i> Members (${members.length}/2)</h4>
+                            <div class="members-list">
+                `;
+                
+                // Show each member with details
+                members.forEach(member => {
+                    const memberDetail = getMemberDetails(room.id, member);
+                    html += `
+                        <div class="member-card">
+                            <div class="member-name">
+                                <i class="fas fa-user-circle"></i>
+                                <span>${member}</span>
+                                ${member === room.creator ? '<span style="background: #ffd700; color: #333; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem;">👑 Creator</span>' : ''}
+                            </div>
+                            <div class="member-details">
+                                <i class="fas fa-id-card"></i> User ID: ${member.replace(/\s/g, '').toLowerCase()}@synclove
+                            </div>
+                            <div class="member-details">
+                                <i class="fas fa-clock"></i> Joined: ${memberDetail.firstJoin ? new Date(memberDetail.firstJoin).toLocaleString() : 'Unknown'}
+                            </div>
+                            <div class="member-details">
+                                <i class="fas fa-chart-simple"></i> Total Actions: ${memberDetail.totalActions}
+                            </div>
+                            <div class="member-joined">
+                                <i class="fas fa-circle" style="color: #4ecdc4; font-size: 0.6rem;"></i> Last active: ${memberDetail.lastActive ? new Date(memberDetail.lastActive).toLocaleString() : 'Never'}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                // Show empty slots if room has space
+                if (members.length < 2) {
+                    html += `
+                        <div class="member-card" style="border-left-color: #ffd93d; background: #fff9e6;">
+                            <div class="member-name">
+                                <i class="fas fa-plus-circle" style="color: #ffd93d;"></i>
+                                <span>Empty Slot</span>
+                            </div>
+                            <div class="member-details">
+                                Waiting for partner to join...
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                html += `
+                            </div>
+                            <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                                <button class="btn" onclick="copyRoomId('${room.id}')"><i class="fas fa-copy"></i> Copy Room ID</button>
+                                <button class="btn btn-danger" onclick="deleteRoom('${room.id}')"><i class="fas fa-trash"></i> Delete Room</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        // Display access logs
+        function displayLogs() {
+            const container = document.getElementById('logsList');
+            const logs = accessLogs.slice(0, 20); // Show last 20 logs
+            
+            if (logs.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-chart-line"></i>
+                        <p>No activity logs yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            logs.forEach(log => {
+                const date = new Date(log.timestamp);
+                const timeAgo = getTimeAgo(date);
+                
+                html += `
+                    <div class="log-entry">
+                        <div>
+                            <strong>${log.userName}</strong> 
+                            <span style="color: #667eea;">${log.action}</span> 
+                            room <span class="room-id">${log.roomId}</span>
+                            <span class="${log.status === 'SUCCESS' ? 'log-success
