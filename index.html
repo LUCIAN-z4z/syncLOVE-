@@ -3,20 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SyncLOVE - Private Couple Space</title>
+    <title>SyncLOVE - Private Couple Space for Long Distance Relationships</title>
+    
+    <!-- Google Search Console Verification -->
+    <meta name="google-site-verification" content="RcNfVTyZta7TrG8KYgnba1BTv89virmOl_3DKZ2-DVI" />
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="SyncLOVE - Free private space for long distance couples. Create your secure room for video calls, chat, photo gallery, countdown timer, and more.">
+    <meta name="keywords" content="long distance relationship, couple app, love app, private chat for couples, video call for couples, relationship app, sync love">
+    <meta name="author" content="SyncLOVE">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="SyncLOVE - Private Couple Space">
+    <meta property="og:description" content="Free private space for long distance couples. Video calls, chat, gallery, and more!">
+    <meta property="og:url" content="https://lucian-z4z.github.io/syncLOVE/">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SyncLOVE - For Long Distance Couples">
+    <meta name="twitter:description" content="Your private love space online">
     
     <!-- CSS Files -->
     <link rel="stylesheet" href="style.css">
-    
-    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/favicon.png">
 </head>
 <body>
 
-    <!-- Navbar -->
+    <!-- ========== NAVBAR ========== -->
     <nav class="navbar">
         <div class="logo">
             <i class="fas fa-heart" style="color: #ff4b6e;"></i>
@@ -25,12 +44,12 @@
         <div class="nav-links">
             <a href="#home">Home</a>
             <a href="#features">Features</a>
+            <a href="#feedback">Feedback</a>
             <a href="#about">About</a>
-            <a href="#contact">Contact</a>
         </div>
     </nav>
 
-    <!-- Hero Section with Options -->
+    <!-- ========== HERO SECTION ========== -->
     <section id="home" class="hero">
         <div class="hero-content">
             <h1>Your Private <span>Love Space</span></h1>
@@ -68,7 +87,7 @@
         </div>
     </section>
 
-    <!-- Features Section -->
+    <!-- ========== FEATURES SECTION ========== -->
     <section id="features" class="features">
         <h2>Everything You Need</h2>
         <div class="features-grid">
@@ -104,46 +123,44 @@
             </div>
         </div>
     </section>
+
+    <!-- ========== FEEDBACK SECTION ========== -->
+    <section id="feedback" class="feedback-section">
+        <div class="feedback-container">
+            <h2>
+                <i class="fas fa-comment-dots" style="color: #ff4b6e;"></i> 
+                We Value Your Feedback!
+            </h2>
+            <p>Help us make SyncLOVE better for everyone</p>
+            
+            <div id="feedbackForm" class="feedback-form">
+                <input type="text" id="feedbackName" placeholder="Your Name" class="feedback-input">
+                <input type="email" id="feedbackEmail" placeholder="Your Email (optional)" class="feedback-input">
+                <select id="feedbackRating" class="feedback-select">
+                    <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
+                    <option value="4">⭐⭐⭐⭐ - Good</option>
+                    <option value="3">⭐⭐⭐ - Average</option>
+                    <option value="2">⭐⭐ - Poor</option>
+                    <option value="1">⭐ - Bad</option>
+                </select>
+                <textarea id="feedbackMessage" rows="4" placeholder="Your feedback... What do you like? What can we improve?" class="feedback-textarea"></textarea>
+                <button onclick="submitFeedback()" class="btn feedback-btn">Submit Feedback 💌</button>
+            </div>
+            
+            <div id="feedbackThanks" class="feedback-thanks" style="display: none;">
+                <i class="fas fa-heart"></i>
+                <h3>Thank You! ❤️</h3>
+                <p>Your feedback helps us improve!</p>
+            </div>
+            
+            <div class="recent-feedback">
+                <h3><i class="fas fa-star" style="color: #ffd93d;"></i> What Others Say</h3>
+                <div id="feedbackList"></div>
+            </div>
+        </div>
     </section>
 
-<!-- ========== FEEDBACK SECTION - YAHAN SE COPY KARO ========== -->
-<section id="feedback" style="background: white; padding: 4rem 2rem;">
-    <div style="max-width: 600px; margin: 0 auto; text-align: center;">
-        <h2 style="font-size: 2rem; color: #333; margin-bottom: 1rem;">
-            <i class="fas fa-comment-dots" style="color: #ff4b6e;"></i> 
-            We Value Your Feedback!
-        </h2>
-        <p style="color: #666; margin-bottom: 2rem;">Help us make SyncLOVE better for everyone</p>
-        
-        <div id="feedbackForm" style="background: #f8f9fa; padding: 2rem; border-radius: 20px;">
-            <input type="text" id="feedbackName" placeholder="Your Name" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #e0e0e0; border-radius: 10px;">
-            <input type="email" id="feedbackEmail" placeholder="Your Email (optional)" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #e0e0e0; border-radius: 10px;">
-            <select id="feedbackRating" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #e0e0e0; border-radius: 10px;">
-                <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
-                <option value="4">⭐⭐⭐⭐ - Good</option>
-                <option value="3">⭐⭐⭐ - Average</option>
-                <option value="2">⭐⭐ - Poor</option>
-                <option value="1">⭐ - Bad</option>
-            </select>
-            <textarea id="feedbackMessage" rows="4" placeholder="Your feedback... What do you like? What can we improve?" style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #e0e0e0; border-radius: 10px;"></textarea>
-            <button onclick="submitFeedback()" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 1rem 2rem; border-radius: 10px; cursor: pointer; width: 100%;">Submit Feedback 💌</button>
-        </div>
-        
-        <div id="feedbackThanks" style="display: none; background: #4ecdc4; color: white; padding: 2rem; border-radius: 20px;">
-            <i class="fas fa-heart" style="font-size: 3rem;"></i>
-            <h3>Thank You! ❤️</h3>
-            <p>Your feedback helps us improve!</p>
-        </div>
-        
-        <div id="recentFeedback" style="margin-top: 3rem; text-align: left;">
-            <h3><i class="fas fa-star" style="color: #ffd93d;"></i> What Others Say</h3>
-            <div id="feedbackList"></div>
-        </div>
-    </div>
-</section>
-<!-- ========== FEEDBACK SECTION END ========== -->
-
-    <!-- Create Room Modal -->
+    <!-- ========== CREATE ROOM MODAL ========== -->
     <div id="createModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeCreateModal()">&times;</span>
@@ -169,7 +186,7 @@
         </div>
     </div>
 
-    <!-- Join Room Modal -->
+    <!-- ========== JOIN ROOM MODAL ========== -->
     <div id="joinModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeJoinModal()">&times;</span>
@@ -194,7 +211,7 @@
         </div>
     </div>
 
-    <!-- Footer -->
+    <!-- ========== FOOTER ========== -->
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -205,7 +222,7 @@
                 <h4>Quick Links</h4>
                 <a href="#home">Home</a>
                 <a href="#features">Features</a>
-                <a href="#about">About</a>
+                <a href="#feedback">Feedback</a>
             </div>
             <div class="footer-section">
                 <h4>Follow Us</h4>
@@ -216,10 +233,10 @@
                 </div>
             </div>
         </div>
-        <p style="margin-top: 2rem;">&copy; 2026 SyncLOVE. All rights reserved.</p>
+        <p style="margin-top: 2rem;">&copy; 2026 SyncLOVE. All rights reserved. | Made with ❤️ for long distance couples</p>
     </footer>
 
-    <!-- JavaScript -->
+    <!-- ========== JAVASCRIPT ========== -->
     <script src="script.js"></script>
 </body>
-</html>
+    </html>
