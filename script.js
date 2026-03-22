@@ -170,3 +170,77 @@ function testButtons() {
 window.addEventListener('load', function() {
     testButtons();
 });
+// ========== FEEDBACK SYSTEM ==========
+
+function submitFeedback() {
+    const name = document.getElementById('feedbackName').value;
+    const email = document.getElementById('feedbackEmail').value;
+    const rating = document.getElementById('feedbackRating').value;
+    const message = document.getElementById('feedbackMessage').value;
+    
+    if (!name || !message) {
+        alert('Please enter your name and feedback!');
+        return;
+    }
+    
+    const feedback = {
+        id: Date.now(),
+        name: name,
+        email: email,
+        rating: rating,
+        message: message,
+        date: new Date().toLocaleString(),
+        approved: true
+    };
+    
+    let feedbacks = JSON.parse(localStorage.getItem('userFeedbacks') || '[]');
+    feedbacks.unshift(feedback);
+    if (feedbacks.length > 20) feedbacks.pop();
+    localStorage.setItem('userFeedbacks', JSON.stringify(feedbacks));
+    
+    document.getElementById('feedbackForm').style.display = 'none';
+    document.getElementById('feedbackThanks').style.display = 'block';
+    
+    setTimeout(() => {
+        document.getElementById('feedbackForm').style.display = 'block';
+        document.getElementById('feedbackThanks').style.display = 'none';
+        document.getElementById('feedbackName').value = '';
+        document.getElementById('feedbackEmail').value = '';
+        document.getElementById('feedbackMessage').value = '';
+    }, 3000);
+    
+    displayFeedbacks();
+}
+
+function displayFeedbacks() {
+    const feedbacks = JSON.parse(localStorage.getItem('userFeedbacks') || '[]');
+    const container = document.getElementById('feedbackList');
+    
+    if (!container) return;
+    
+    if (feedbacks.length === 0) {
+        container.innerHTML = '<p style="color: #999;">No feedback yet. Be the first! 💕</p>';
+        return;
+    }
+    
+    let html = '';
+    feedbacks.slice(0, 5).forEach(fb => {
+        const stars = '⭐'.repeat(parseInt(fb.rating));
+        html += `
+            <div style="background: #f8f9fa; padding: 1rem; border-radius: 10px; margin: 1rem 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong>${fb.name}</strong>
+                    <span style="color: #ffd93d;">${stars}</span>
+                </div>
+                <p style="margin-top: 0.5rem; color: #666;">"${fb.message}"</p>
+                <small style="color: #999;">${fb.date}</small>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+// Call on load if feedbackList exists
+if (document.getElementById('feedbackList')) {
+    displayFeedbacks();
+}
